@@ -87,6 +87,31 @@ hugroomer/
 
 ---
 
+## 📈 Development History & Evolution
+
+Hugroomer는 단순한 기능 구현을 넘어, 실제 운영 환경에서의 확장성과 유지보수성을 확보하기 위해 점진적인 아키텍처 개선을 거쳤습니다.
+
+| 버전 | 주요 마일스톤 | 기술적 고찰 및 해결 방안 |
+| :--- | :--- | :--- |
+| **v0.1.0** | **Monorepo Foundation** | Web(Next.js)과 Mobile(Expo) 간의 **코드 중복을 최소화**하기 위해 Turborepo 기반 모노레포를 구축하고, 공통 타입 패키지를 통해 데이터 정합성을 확보함. |
+| **v0.5.0** | **Scheduling Engine** | 1인샵 원장의 편의성을 위해 Gantt 차트 기반 타임라인을 구현함. SSR 환경에서의 **KST/UTC 시간대 일관성** 문제를 `mounted` 훅과 전용 시간 유틸리티로 해결함. |
+| **v0.8.0** | **AI & Multi-care Logic** | 기존 개별 테이블(hotel_*)의 데이터 산재 문제를 해결하기 위해 **통합 케어 테이블(`care_*`)**로 마이그레이션함. Claude API를 연동하여 반복적인 문서 작성 업무를 자동화함. |
+| **v0.9.5** | **Real-time & Security** | Supabase Realtime을 도입하여 별도의 소켓 서버 없이 실시간 채팅을 구현함. 비즈니스 로직 전반에 **RLS(Row Level Security)**를 적용하여 테넌트 간 보안을 강화함. |
+| **v1.0.0** | **Build Optimization** | Vercel 및 EAS(Expo Application Services) 빌드 파이프라인을 구축함. **Android New Architecture**를 활성화하여 모바일 앱의 런타임 성능을 극대화함. |
+
+### 💡 주요 설계 고찰 (Design Decisions)
+
+1.  **왜 Supabase인가?**
+    *   1인 개발 환경에서 인증, 실시간 통신, 스토리지 인프라 구축 비용을 최소화하고 비즈니스 로직 개발에 집중하기 위해 선택했습니다. 특히 PostgreSQL의 강력한 RLS 기능을 통해 보안 로직을 DB 레벨로 이관했습니다.
+
+2.  **Server Actions vs API Routes**
+    *   Next.js 14의 Server Actions를 적극 활용하여 클라이언트-서버 간의 타입 세이프티를 강화하고, API 엔드포인트 관리 공수를 줄였습니다. 복잡한 유효성 검사는 Zod와 결합하여 처리했습니다.
+
+3.  **Cross-Platform UI Strategy**
+    *   Web 대시보드는 생산성을 위해 `shadcn/ui`를, Mobile은 네이티브 성능을 위해 `React Native`를 사용하되, `packages/ui`에서 디자인 시스템의 핵심 로직과 테마를 공유하여 브랜드 아이덴티티를 유지했습니다.
+
+---
+
 ## 🏗 시스템 아키텍처 및 DB 설계
 
 Hugroomer는 확장성과 유지보수성을 고려하여 관계형 데이터베이스를 설계했습니다.
@@ -96,6 +121,8 @@ Hugroomer는 확장성과 유지보수성을 고려하여 관계형 데이터베
 - **care_logs**: Claude AI 연동을 통한 자동 리포트 생성 기반 데이터
 - **chat_rooms**: Supabase Realtime 기반의 실시간 소통 인프라
 - **Soft Delete**: 반려동물 삭제 시 `is_deleted` 처리로 과거 기록(추억 앨범) 보존 정책 적용
+
+*※ 상세 DB ERD 및 API 명세서는 내부 문서로 관리 중이며, 요청 시 별도 제공 가능합니다.*
 
 ---
 
